@@ -9,13 +9,7 @@ const postRoutes = require("./routes/postRoutes");
 
 const app = express();
 app.use(bodyParser.json());
-app.use(
-  cors({
-    origin: "http://127.0.0.1:5500",
-    allowedHeaders: ["Authorization", "Content-Type"],
-    credentials: true,
-  })
-);
+app.use(cors({}));
 // MongoDB setup
 mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost:27017/social_media_db",
