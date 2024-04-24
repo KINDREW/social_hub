@@ -2,13 +2,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const cors = require("cors");
 
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 
 const app = express();
 app.use(bodyParser.json());
-
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500",
+    allowedHeaders: ["Authorization", "Content-Type"],
+    credentials: true,
+  })
+);
 // MongoDB setup
 mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost:27017/social_media_db",

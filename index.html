@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SocialHub</title>
+  </head>
+  <body>
+    <h1>SocialHub</h1>
+
+    <h2>Register</h2>
+    <input type="text" id="registerUsername" placeholder="Username" />
+    <input type="email" id="registerEmail" placeholder="Email" />
+    <input type="password" id="registerPassword" placeholder="Password" />
+    <button onclick="register()">Register</button>
+
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button onclick="login()">Login</button>
+
+    <h2>Create Post</h2>
+    <input type="text" id="postContent" placeholder="Post content" />
+    <button onclick="createPost()">Create Post</button>
+
+    <h2>View My Posts</h2>
+    <ul id="myPosts"></ul>
+
+    <script>
+      async function register() {
+        const username = document.getElementById("registerUsername").value;
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        const response = await fetch("http://localhost:3000/users/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, email, password }),
+        });
+        const data = await response.json();
+        console.log(data);
+      }
+
+      async function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const response = await fetch("http://localhost:3000/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await response.json();
+        console.log(data);
+        if (response.ok) {
+          const token = data.token;
+          localStorage.setItem("token", token); // Store the JWT token in localStorage
+          getMyPosts(); // Call getMyPosts after successful login
+        }
+      }
+
+      async function createPost() {
+        const content = document.getElementById("postContent").value;
+        const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
+        const response = await fetch("http://localhost:3000/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ content }),
+        });
+        const data = await response.json();
+        console.log(data);
+        getMyPosts();
+      }
+
+      async function getMyPosts() {
+        const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
+        const response = await fetch("http://localhost:3000/posts", {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = await response.json();
+        const myPostsElement = document.getElementById("myPosts");
+        myPostsElement.innerHTML = "";
+        data.forEach((post) => {
+          const li = document.createElement("li");
+          li.textContent = post.content;
+          myPostsElement.appendChild(li);
+        });
+      }
+
+      async function likePost(postId) {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          `http://localhost:3000/posts/${postId}/like`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+        // Refresh my posts after liking
+        getMyPosts();
+      }
+
+      async function commentPost(postId) {
+        const content = prompt("Enter your comment:");
+        if (content !== null && content.trim() !== "") {
+          const token = localStorage.getItem("token");
+          const response = await fetch(
+            `http://localhost:3000/posts/${postId}/comment`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+              body: JSON.stringify({ content }),
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          // Refresh my posts after commenting
+          getMyPosts();
+        }
+      }
+    </script>
+  </body>
+</html>
