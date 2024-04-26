@@ -175,16 +175,6 @@
           likeButton.onclick = () => likePost(post._id);
           li.appendChild(likeButton);
 
-          // Comment section
-          const commentInput = document.createElement("input");
-          commentInput.type = "text";
-          commentInput.placeholder = "Add a comment";
-          const commentButton = document.createElement("button");
-          commentButton.textContent = "Comment";
-          commentButton.onclick = () => commentPost(post._id);
-          li.appendChild(commentInput);
-          li.appendChild(commentButton);
-
           myPostsElement.appendChild(li);
         });
       }
