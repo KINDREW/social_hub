@@ -41,9 +41,11 @@
             body: JSON.stringify({ username, email, password }),
           }
         );
-        const data = await response.json();
-        console.log(data);
-        window.alert(data);
+        if (response.ok) {
+          window.alert("Registration successful!");
+        } else {
+          window.alert("Registration failed. Please try again.");
+        }
       }
 
       async function login() {
@@ -61,17 +63,21 @@
         );
         const data = await response.json();
         console.log(data);
-        window.alert(data);
         if (response.ok) {
           const token = data.token;
-          localStorage.setItem("token", token); // Store the JWT token in localStorage
+          localStorage.setItem("token", token);
+          window.alert("Login successful!");
           getMyPosts();
+        } else {
+          window.alert(
+            "Login failed. Please check your credentials and try again."
+          );
         }
       }
 
       async function createPost() {
         const content = document.getElementById("postContent").value;
-        const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
+        const token = localStorage.getItem("token");
         const response = await fetch(
           "https://socialhub-production.up.railway.app/posts",
           {
@@ -83,14 +89,16 @@
             body: JSON.stringify({ content }),
           }
         );
-        const data = await response.json();
-        console.log(data);
-        window.alert(data);
-        getMyPosts();
+        if (response.ok) {
+          window.alert("Post created successfully!");
+          getMyPosts();
+        } else {
+          window.alert("Failed to create post. Please try again.");
+        }
       }
 
       async function getMyPosts() {
-        const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
+        const token = localStorage.getItem("token");
         const response = await fetch(
           "https://socialhub-production.up.railway.app/posts",
           {
@@ -107,6 +115,7 @@
           li.textContent = post.content;
           myPostsElement.appendChild(li);
         });
+        refreshPosts();
       }
 
       async function likePost(postId) {
@@ -121,10 +130,12 @@
             },
           }
         );
-        const data = await response.json();
-        console.log(data);
-        // Refresh my posts after liking
-        getMyPosts();
+        if (response.ok) {
+          window.alert("Post liked!");
+          getMyPosts();
+        } else {
+          window.alert("Failed to like post. Please try again.");
+        }
       }
 
       async function commentPost(postId) {
@@ -142,10 +153,57 @@
               body: JSON.stringify({ content }),
             }
           );
-          const data = await response.json();
-          console.log(data);
-          // Refresh my posts after commenting
-          getMyPosts();
+          if (response.ok) {
+            window.alert("Comment added!");
+            getMyPosts();
+          } else {
+            window.alert("Failed to add comment. Please try again.");
+          }
+        }
+      }
+
+      async function renderPosts(posts) {
+        const myPostsElement = document.getElementById("myPosts");
+        myPostsElement.innerHTML = "";
+        posts.forEach((post) => {
+          const li = document.createElement("li");
+          li.textContent = post.content;
+
+          // Like button
+          const likeButton = document.createElement("button");
+          likeButton.textContent = "Like";
+          likeButton.onclick = () => likePost(post._id);
+          li.appendChild(likeButton);
+
+          // Comment section
+          const commentInput = document.createElement("input");
+          commentInput.type = "text";
+          commentInput.placeholder = "Add a comment";
+          const commentButton = document.createElement("button");
+          commentButton.textContent = "Comment";
+          commentButton.onclick = () => commentPost(post._id);
+          li.appendChild(commentInput);
+          li.appendChild(commentButton);
+
+          myPostsElement.appendChild(li);
+        });
+      }
+
+      async function refreshPosts() {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "https://socialhub-production.up.railway.app/posts",
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        if (response.ok) {
+          const posts = await response.json();
+          renderPosts(posts);
+        } else {
+          window.alert("Failed to fetch posts. Please try again.");
         }
       }
     </script>
