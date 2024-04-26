@@ -32,7 +32,7 @@
         const email = document.getElementById("registerEmail").value;
         const password = document.getElementById("registerPassword").value;
         const response = await fetch(
-          "http://socialhub-production.up.railway.app/users/register",
+          "https://socialhub-production.up.railway.app/users/register",
           {
             method: "POST",
             headers: {
@@ -50,7 +50,7 @@
         const email = document.getElementById("loginEmail").value;
         const password = document.getElementById("loginPassword").value;
         const response = await fetch(
-          "http://socialhub-production.up.railway.app/users/login",
+          "https://socialhub-production.up.railway.app/users/login",
           {
             method: "POST",
             headers: {
@@ -73,7 +73,7 @@
         const content = document.getElementById("postContent").value;
         const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
         const response = await fetch(
-          "http://socialhub-production.up.railway.app/posts",
+          "https://socialhub-production.up.railway.app/posts",
           {
             method: "POST",
             headers: {
@@ -92,7 +92,7 @@
       async function getMyPosts() {
         const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
         const response = await fetch(
-          "http://socialhub-production.up.railway.app/posts",
+          "https://socialhub-production.up.railway.app/posts",
           {
             headers: {
               Authorization: token,
@@ -112,7 +112,7 @@
       async function likePost(postId) {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `http://socialhub-production.up.railway.app/posts/${postId}/like`,
+          `https://socialhub-production.up.railway.app/posts/${postId}/like`,
           {
             method: "POST",
             headers: {
@@ -132,7 +132,7 @@
         if (content !== null && content.trim() !== "") {
           const token = localStorage.getItem("token");
           const response = await fetch(
-            `http://socialhub-production.up.railway.app/posts/${postId}/comment`,
+            `https://socialhub-production.up.railway.app/posts/${postId}/comment`,
             {
               method: "POST",
               headers: {
