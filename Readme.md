@@ -12,6 +12,7 @@ SocialHub is a simple social media platform where users can create profiles, mak
 - **Follow Users**: Users can follow other users to stay updated with their posts.
 - **Like Posts**: Users can like posts created by other users.
 - **Comment on Posts**: Users can comment on posts created by other users.
+- **Realtime Messaging**: Users can send realtime messages to each other with Socket.IO.
 
 ## Technologies Used
 
@@ -22,6 +23,8 @@ SocialHub is a simple social media platform where users can create profiles, mak
 - **JSON Web Tokens (JWT)**: Used for user authentication.
 - **bcrypt.js**: Library for hashing passwords securely.
 - **dotenv**: Module for loading environment variables from a `.env` file.
+- **CORS**: Middleware for handling Cross-Origin Resource Sharing.
+- **Socket.IO**: Real-time bidirectional communication library.
 
 ## Getting Started
 
@@ -58,14 +61,13 @@ SocialHub is a simple social media platform where users can create profiles, mak
    npm start
    ```
 
-## Usage
-
 - Register a new user account using the `/users/register` endpoint.
 - Log in with the registered user account using the `/users/login` endpoint.
 - Create posts using the `/posts` endpoint.
 - Follow other users using the `/users/:userId/follow` endpoint.
 - Like posts using the `/posts/:postId/like` endpoint.
 - Comment on posts using the `/posts/:postId/comment` endpoint.
+- Engage in real-time messaging with other users using Socket.IO for instantaneous communication. You can establish a WebSocket connection to `/chat` endpoint for real-time messaging.
 
 ## Contributing
 

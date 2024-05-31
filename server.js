@@ -1,35 +1,39 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+const http = require("http");
+const socketIo = require("socket.io");
 const mongoose = require("mongoose");
-require("dotenv").config();
+const bodyParser = require("body-parser");
 const cors = require("cors");
+const dotenv = require("dotenv");
 
-const userRoutes = require("./routes/userRoutes");
-const postRoutes = require("./routes/postRoutes");
+dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
 app.use(bodyParser.json());
-app.use(cors({}));
-// MongoDB setup
-mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost:27017/social_media_db",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
+app.use(cors());
+
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Routes
+const userRoutes = require("./routes/users");
+const postRoutes = require("./routes/posts");
+const chatRoutes = require("./routes/chatRoutes");
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/chat", chatRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+// Socket.IO logic
+require("./socket")(io);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
